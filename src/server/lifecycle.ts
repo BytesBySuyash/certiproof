@@ -41,7 +41,7 @@ export async function issue(a:Actor,inputValue:unknown,idempotencyKey:string,see
    await appendEvent(tx,a.issuerId,payload.certificateId,manifestHash,'ISSUE','ISSUED');
    await tx.issuanceRequest.update({where:{id:reserved.id},data:{state:'COMMITTED',payload:undefined,leaseUntil:null,processingToken:null}});
    await tx.$executeRaw`UPDATE certiproof."IssuanceRequest" SET payload=NULL WHERE id=${reserved.id}`;
-  },{maxWait:10000,timeout:15000});return {id:payload.certificateId,state:'COMMITTED'};
+  },{maxWait:30000,timeout:60000});return {id:payload.certificateId,state:'COMMITTED'};
  }catch(error){await db.issuanceRequest.updateMany({where:{id:reserved.id,state:'PROCESSING',processingToken},data:{leaseUntil:new Date(0),processingToken:null}}).catch(()=>{});throw error;}
 }
 export async function revoke(a:Actor,id:string,reasonCode:'CORRECTION'|'WITHDRAWN'){
