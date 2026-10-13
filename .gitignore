@@ -14,3 +14,6 @@ playwright-report/
 *.tsbuildinfo
 coverage/
 .cache-audit.json
+
+.vercel
+.env*
