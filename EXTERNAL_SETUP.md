@@ -4,7 +4,7 @@ Never put passwords, tokens or keys in chat. Use gitignored .env.local and provi
 
 | Step | Service | Why | Exact owner action | Configuration names | Status | Next |
 |---|---|---|---|---|---|---|
-| 1 | GitHub Free | Private source and deployment integration | Existing BytesBySuyash Git Credential Manager login is reusable; no new login needed | Repository URL | Authentication verified; intended certiproof repository absent before creation | Push tested source after local commit |
+| 1 | GitHub Free | Private source and deployment integration | Existing BytesBySuyash Git Credential Manager login reused; private repository created and pushed | https://github.com/BytesBySuyash/certiproof | Complete; initial tested source commit cadbb3f | Authorise only this repository in Vercel |
 | 2 | Supabase Free | Durable DB/Auth/private files | Create one Free project, no trial/card; dashboard Connect: obtain runtime/session connections and API keys | NEXT_PUBLIC_SUPABASE_URL, NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY, SUPABASE_SECRET_KEY, DATABASE_URL, DIRECT_URL | Pending | Run reviewed setup/migrations, provision operator |
 | 3 | Vercel Hobby | Public full-stack HTTPS | Sign into Hobby and connect only intended repo, or run CLI login | APP_ORIGIN, server environment entries from .env.local | Pending; no CLI credentials found | Deploy and test actual domain |
 | 4 | Local key custody | Stable signatures | Keys already generated once in .env.local; privately back up that file/key configuration | CERTIFICATE_SIGNING_PRIVATE_KEY_B64, SIGNING_KEY_ID, TRUSTED_PUBLIC_KEYS_JSON, ABUSE_HASH_SECRET | Generated locally; owner backup/provider entry pending | Validate pinned public ring after deployment |

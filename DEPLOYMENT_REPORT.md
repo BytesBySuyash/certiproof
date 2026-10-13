@@ -2,7 +2,7 @@
 
 Date: 13 October 2026 (Asia/Calcutta).
 
-**Status: not deployed; owner accounts/configuration pending.** No production URL or remote repository is known. No hosted lifecycle, migration, backup restoration or redeployment result is claimed.
+**Status: source published privately; application deployment is pending owner Supabase/Vercel configuration.** Production URL: none. Private repository: https://github.com/BytesBySuyash/certiproof. Initial tested source commit: `cadbb3f40eae3ea20e64c4e7f839966c700e8ebf`. No hosted lifecycle, migration, backup restoration or redeployment result is claimed.
 
 - Workspace: D:/BlockChain project, originally empty.
 - Local runtime: workspace Node 24.21.0; host Node 23.11.0 is not used for release checks.
