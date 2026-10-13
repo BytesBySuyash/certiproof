@@ -47,11 +47,15 @@ const settings: Record<string, Setting> = {
     label: 'Supabase Session Pooler URL (port 5432)',
     secret: true,
     validate(value) {
+      if (/\[(?:YOUR-)?PASSWORD\]/i.test(value)) {
+        return 'Replace the password placeholder with the actual Supabase database password.';
+      }
       try {
         const url = new URL(value);
         if (!['postgres:', 'postgresql:'].includes(url.protocol)) {
           return 'Use a postgres:// or postgresql:// connection string.';
         }
+        if (!url.password) return 'The connection string must include the database password.';
         if (url.port && url.port !== '5432') return 'Use the session pooler URL on port 5432.';
       } catch {
         return 'Enter the complete session pooler connection string.';
