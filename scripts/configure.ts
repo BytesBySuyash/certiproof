@@ -47,8 +47,8 @@ const settings: Record<string, Setting> = {
     label: 'Supabase Session Pooler URL (port 5432)',
     secret: true,
     validate(value) {
-      if (/\[(?:YOUR-)?PASSWORD\]/i.test(value)) {
-        return 'Replace the password placeholder with the actual Supabase database password.';
+      if (/\[[^\]]*\]/.test(value)) {
+        return 'Remove square brackets from the password and URL-encode reserved characters.';
       }
       try {
         const url = new URL(value);
