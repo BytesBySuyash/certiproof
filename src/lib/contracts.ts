@@ -1,0 +1,23 @@
+import { z } from 'zod';
+export const certificateId = z.string().regex(/^cp_[A-Za-z0-9_-]{22}$/);
+const date = z.string().regex(/^\d{4}-\d{2}-\d{2}$/).refine(v => !isNaN(Date.parse(v)) && new Date(v).toISOString().slice(0,10) === v, 'Use a real calendar date');
+const text = (max:number) => z.string().trim().min(2).max(max).transform(v=>v.normalize('NFC')).refine(v=> !/[\u0000-\u001f\u007f]/.test(v),'Control characters are not allowed');
+export const issueInput = z.object({subjectName:text(100),courseTitle:text(160),completionDate:date,expiresAt:date.nullable()}).strict().refine(v=>v.expiresAt===null || v.expiresAt>=v.completionDate,'Expiry must follow completion');
+export const issueRequest = z.object({issuerId:z.string().min(1).max(64),idempotencyKey:z.string().uuid(),input:issueInput}).strict();
+export const verifyInput = z.object({id:certificateId.optional(),digest:z.string().regex(/^[a-f0-9]{64}$/).optional(),kind:z.enum(['PDF','IMAGE','ID']),method:z.enum(['ID','FINGERPRINT','TEXT','QR','MANUAL'])}).strict().refine(v=>v.id||v.digest,'Provide an ID or digest');
+export const payloadSchema = z.object({version:z.literal(1),certificateId,issuerId:z.string(),issuerNameSnapshot:z.string(),subjectName:z.string(),courseTitle:z.string(),completionDate:date,issuedAt:z.string().datetime(),expiresAt:z.string().datetime().nullable(),nonce:z.string().regex(/^[A-Za-z0-9_-]{43}$/)}).strict();
+export const manifestSchema = payloadSchema.omit({subjectName:true,nonce:true}).extend({verificationOrigin:z.string().url(),payloadHash:z.string().regex(/^[a-f0-9]{64}$/),pdfHash:z.string().regex(/^[a-f0-9]{64}$/),keyId:z.string()}).strict();
+export const eventSchema = z.object({version:z.literal(1),ledgerId:z.string(),sequence:z.string().regex(/^[1-9][0-9]*$/),type:z.enum(['ISSUE','REVOKE','PII_PURGED']),certificateId,manifestHash:z.string().regex(/^[a-f0-9]{64}$/),occurredAt:z.string().datetime(),previousHash:z.string().regex(/^[a-f0-9]{64}$/),reasonCode:z.enum(['ISSUED','CORRECTION','WITHDRAWN','PRIVACY']).nullable(),keyId:z.string()}).strict();
+export type Payload = z.infer<typeof payloadSchema>;
+export type Manifest = z.infer<typeof manifestSchema>;
+export type EventBody = z.infer<typeof eventSchema>;
+export type SignedEvent = {body:EventBody;hash:string;signature:string};
+export type Checkpoint = {body:{version:1;ledgerId:string;sequence:string;headHash:string;timestamp:string;keyId:string};signature:string};
+export type Verification = {
+ recordStatus:'ACTIVE'|'REVOKED'|'EXPIRED'|'NOT_FOUND'|'UNAVAILABLE'|'INTEGRITY_ERROR';
+ documentCheck:'NOT_CHECKED'|'MATCH'|'MISMATCH'|'NOT_APPLICABLE'; issuerStatus:'DEMO'|'APPROVED'|'SUSPENDED'|'UNKNOWN';
+ signatureStatus:'VERIFIED'|'FAILED'|'UNAVAILABLE';privateDataAvailability:'AVAILABLE'|'PURGED'|'UNKNOWN';
+ checkedAt:string; identificationMethod:string; certificateId?:string;issuerName?:string;course?:string;issuedAt?:string;completionDate?:string;expiresAt?:string|null;
+ conflict?:boolean;
+};
+export const ZERO_HASH = '0'.repeat(64);

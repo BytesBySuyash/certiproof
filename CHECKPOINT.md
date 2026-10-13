@@ -1,0 +1,11 @@
+# Working checkpoint
+
+Workspace initially empty. Specification copied verbatim to PROJECT_SPEC.md. No AGENTS.md found in workspace or D: root. Git is at D:/2.programming buddies/Git/cmd/git.exe. Host Node 23.11.0 is unsupported; an independent workspace Node 24.21.0 executable is retained under .tools/node24 and ignored by Git. No Vercel or Supabase connection was found.
+
+Implemented the complete local source: private issuer access and scoped roles; recoverable immutable PDF issuance; Ed25519 manifests; signed per-issuer hash-linked ledgers and checkpoints; revocation; browser-local PDF/image parsing; honest public result dimensions; privacy request/purge workflow; operator management; examples; audit lab; responsive/accessibility UI; setup, maintenance, backup/restore and release scripts; documentation and traceability.
+
+Observed local results on 13 October 2026: clean npm install and production build passed; npm audit reports zero vulnerabilities; TypeScript/lint passed; 21 unit tests passed; 9 Chromium tests passed; 2 hosted browser tests skipped; 8 hosted integration tests skipped. Real local PDF text/QR and image QR extraction passed with remote requests blocked. Visual review passed after moving the footer behind main content. The release runner intentionally exits nonzero after local checks because hosted gates are incomplete.
+
+Stable signing identity exists only in gitignored .env.local and was preserved on rerun; it has not been put in any response or repository. Secret-value scan must run after staging and before push. GitHub credential for BytesBySuyash was verified read-only; private certiproof repository did not exist at that check. Supabase configuration and Vercel access remain absent. No public URL exists.
+
+Next exact step: create Supabase Free project. With Node 24, run `npm run configure` (or `.tools/node24/node.exe --import tsx scripts/configure.ts`) locally and enter public API values plus hidden secret/session-pooler URL; never send them in chat. Then run setup/doctor, configure stable production APP_ORIGIN, deploy through Vercel Hobby, generate hosted fixtures, run hosted/disposable/restore/redeploy checks and complete the owner phone/network check. Update DEPLOYMENT_REPORT.md and ACCEPTANCE_REPORT.md with observed results only.

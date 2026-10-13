@@ -1,0 +1,137 @@
+generator client {
+  provider = "prisma-client-js"
+}
+datasource db {
+  provider = "postgresql"
+  url = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+  schemas = ["certiproof"]
+}
+model Issuer {
+  id String @id
+  name String
+  status String @default("DEMO")
+  enabled Boolean @default(true)
+  members Membership[]
+  certificates Certificate[]
+  requests IssuanceRequest[]
+  head LedgerHead?
+  @@schema("certiproof")
+}
+model Membership {
+  id String @id @default(cuid())
+  userId String
+  issuerId String
+  role String
+  enabled Boolean @default(true)
+  issuer Issuer @relation(fields:[issuerId], references:[id])
+  @@unique([userId,issuerId])
+  @@schema("certiproof")
+}
+model IssuanceRequest {
+  id String @id @default(cuid())
+  issuerId String
+  actorId String
+  idempotencyKey String
+  inputHash String
+  certificateId String @unique
+  payload Json?
+  objectKey String @unique
+  state String @default("RESERVED")
+  leaseUntil DateTime?
+  processingToken String?
+  stagedHash String?
+  createdAt DateTime @default(now())
+  issuer Issuer @relation(fields:[issuerId], references:[id])
+  @@unique([issuerId,idempotencyKey])
+  @@schema("certiproof")
+}
+model Certificate {
+  id String @id
+  issuerId String
+  manifest Json
+  manifestHash String @unique
+  signature String
+  pdfHash String @unique
+  status String @default("ACTIVE")
+  privateState String @default("AVAILABLE")
+  createdAt DateTime @default(now())
+  issuer Issuer @relation(fields:[issuerId], references:[id])
+  privateData CertificatePrivateData?
+  artifact CertificateArtifact?
+  @@schema("certiproof")
+}
+model CertificatePrivateData {
+  certificateId String @id
+  payload Json
+  certificate Certificate @relation(fields:[certificateId], references:[id])
+  @@schema("certiproof")
+}
+model CertificateArtifact {
+  certificateId String @id
+  objectKey String @unique
+  byteLength Int
+  certificate Certificate @relation(fields:[certificateId], references:[id])
+  @@schema("certiproof")
+}
+model LedgerHead {
+  issuerId String @id
+  sequence BigInt @default(0)
+  hash String
+  issuer Issuer @relation(fields:[issuerId], references:[id])
+  @@schema("certiproof")
+}
+model LedgerEvent {
+  id String @id @default(cuid())
+  ledgerId String
+  sequence BigInt
+  certificateId String
+  type String
+  body Json
+  hash String
+  signature String
+  @@unique([ledgerId,sequence])
+  @@unique([certificateId,type])
+  @@schema("certiproof")
+}
+model PrivateActionDetail {
+  id String @id @default(cuid())
+  certificateId String
+  actorId String
+  reason String
+  createdAt DateTime @default(now())
+  @@schema("certiproof")
+}
+model PrivacyRequest {
+  id String @id @default(cuid())
+  tokenHash String @unique
+  kind String
+  message String
+  certificateId String?
+  issuerId String?
+  state String @default("OPEN")
+  decision String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@schema("certiproof")
+}
+model AbuseCounter {
+  key String @id
+  count Int @default(1)
+  expiresAt DateTime
+  @@schema("certiproof")
+}
+model CampaignCount {
+  key String @id
+  count Int @default(1)
+  expiresAt DateTime
+  @@schema("certiproof")
+}
+model DemoAsset {
+  slug String @id
+  label String
+  objectKey String @unique
+  mime String
+  certificateId String?
+  @@schema("certiproof")
+}

@@ -1,0 +1,16 @@
+node_modules/
+.next/
+.env*
+!.env.example
+!.env.integration.example
+.vercel/
+.tools/
+.cache/
+backups/
+evidence-private/
+evidence-public/
+test-results/
+playwright-report/
+*.tsbuildinfo
+coverage/
+.cache-audit.json
