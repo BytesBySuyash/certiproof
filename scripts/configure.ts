@@ -123,7 +123,7 @@ function showStatus() {
 
 function showHelp() {
   console.log('Save one local setting at a time:');
-  console.log('  npm run configure -- --set <name>');
+  console.log('  npm run configure -- <name>');
   console.log('  npm run configure -- --status');
   console.log(`Names: ${Object.keys(settings).join(', ')}`);
   console.log('Values are saved in gitignored .env.local. Secret input is hidden.');
@@ -135,7 +135,9 @@ async function main() {
     return;
   }
   const setIndex = process.argv.indexOf('--set');
-  const alias = setIndex >= 0 ? process.argv[setIndex + 1] : undefined;
+  const alias = setIndex >= 0
+    ? process.argv[setIndex + 1]
+    : process.argv.slice(2).find((argument) => !argument.startsWith('-'));
   if (!alias || process.argv.includes('--help')) {
     showHelp();
     return;
